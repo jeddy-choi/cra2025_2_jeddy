@@ -1,11 +1,14 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <map>
 #include <string>
 #include <functional>
+#include <gmock/gmock.h>
 
-#define CLEAR_SCREEN "\033[H\033[2J"
+#include "assembple_type.h"
+#include "print.h"
+
 
 int stack[10];
 
@@ -15,66 +18,9 @@ int selectbrakeSystem(int answer);
 int selectSteeringSystem(int answer);
 int selectNullOperation(int answer);
 
-void printScrren(int step);
-void printScreenCarType();
-void printScreenEngine();
-void printScreenBrakeSystem();
-void printScreenSteeringSystem();
-void printScreenRunTest();
-
 void runProducedCar();
 void testProducedCar();
 void delay(int ms);
-
-enum QuestionType
-{
-    CarType_Q,
-    Engine_Q,
-    brakeSystem_Q,
-    SteeringSystem_Q,
-    Run_Test,
-    QuestionType_Cnt
-};
-
-enum CarType
-{
-    SEDAN = 1,
-    SUV,
-    TRUCK,
-    CarType_Cnt
-};
-
-enum Engine
-{
-    GM = 1,
-    TOYOTA,
-    WIA,
-    BROCKEN_Engine,
-    Engine_Cnt
-};
-
-enum brakeSystem
-{
-    MANDO = 1,
-    CONTINENTAL,
-    BOSCH_B,
-    brakeSystem_Cnt
-};
-
-enum SteeringSystem
-{
-    BOSCH_S = 1,
-    MOBIS,
-    SteeringSystem_Cnt
-};
-
-enum RunTest
-{
-    RETURN_TO_START,
-    RUN_PRODUCED_CAR,
-    RUN_TEST,
-    RunTest_Cnt
-};
 
 // 질문에 대한 전역 맵 선언
 std::map<int, std::string> questionMap = {
@@ -175,8 +121,7 @@ std::string getSteeringSystemTypeString2(int answer) {
 }
 
 // 함수 포인터 배열 선언
-int (*selectOperation[QuestionType_Cnt])(int) = { selectCarType, selectEngine, selectbrakeSystem, selectSteeringSystem, selectNullOperation };
-void (*printScreenType[QuestionType_Cnt])(void) = { printScreenCarType, printScreenEngine, printScreenBrakeSystem, printScreenSteeringSystem, printScreenRunTest };
+int (*selectOperation[QuestionType_Cnt])(int) = { selectCarType, selectEngine, selectbrakeSystem, selectSteeringSystem, nullptr };
 
 void delay(int ms)
 {
@@ -274,59 +219,10 @@ int main()
             step = processAnswer(step, answer);
         }
     }
-}
 
-void printScreenCarType() {
-    printf("        ______________\n");
-    printf("       /|            | \n");
-    printf("  ____/_|_____________|____\n");
-    printf(" |                      O  |\n");
-    printf(" '-(@)----------------(@)--'\n");
-    printf("===============================\n");
-    printf("어떤 차량 타입을 선택할까요?\n");
-    printf("1. Sedan\n");
-    printf("2. SUV\n");
-    printf("3. Truck\n");
-}
+    testing::InitGoogleMock();
+    return RUN_ALL_TESTS();
 
-void printScreenEngine() {
-    printf("어떤 엔진을 탑재할까요?\n");
-    printf("0. 뒤로가기\n");
-    printf("1. GM\n");
-    printf("2. TOYOTA\n");
-    printf("3. WIA\n");
-    printf("4. 고장난 엔진\n");
-}
-
-void printScreenBrakeSystem() {
-    printf("어떤 제동장치를 선택할까요?\n");
-    printf("0. 뒤로가기\n");
-    printf("1. MANDO\n");
-    printf("2. CONTINENTAL\n");
-    printf("3. BOSCH\n");
-}
-
-void printScreenSteeringSystem() {
-    printf("어떤 조향장치를 선택할까요?\n");
-    printf("0. 뒤로가기\n");
-    printf("1. BOSCH\n");
-    printf("2. MOBIS\n");
-}
-
-void printScreenRunTest() {
-    printf("멋진 차량이 완성되었습니다.\n");
-    printf("어떤 동작을 할까요?\n");
-    printf("0. 처음 화면으로 돌아가기\n");
-    printf("1. RUN\n");
-    printf("2. Test\n");
-
-}
-
-void printScrren(int step)
-{
-    printf(CLEAR_SCREEN);
-    printScreenType[step]();
-    printf("===============================\n");
 }
 
 int selectCarType(int answer)
@@ -365,13 +261,6 @@ int selectSteeringSystem(int answer)
     return Run_Test;
 }
 
-
-int selectNullOperation(int answer)
-{
-    printf("잘못된 입력값입니다.");
-
-    return 0;
-}
 
 int isValidCheck()
 {
